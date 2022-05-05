@@ -72,7 +72,28 @@ function buildAnnounceRequest(connectionId, torrent, port = 6881) {
 	return buffer;
 }
 
-function parseAnnounceResponse(response) {}
+function parseAnnounceResponse(response) {
+	function group(iterable, groupSize) {
+		let groups = [];
+		for (let i = 0; i < iterable.length; i += groupSize) {
+			groups.push(iterable.slice(i, i + groupSize));
+		}
+		return groups;
+	}
+
+	return {
+		action: response.readUInt32BE(0),
+		transactionId: response.readUInt32BE(4),
+		leechers: response.readUInt32BE(8),
+		seeders: response.readUInt32BE(12),
+		peers: group(response.slice(20), 6).map((address) => {
+			return {
+				ip: address.slice(0, 4).join('.'),
+				port: address.readUInt16BE(4),
+			};
+		}),
+	};
+}
 
 module.exports.getPeers = (torrent, callback) => {
 	const socket = dgram.createSocket('udp4');
