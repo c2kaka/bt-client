@@ -4,6 +4,10 @@ const bencode = require('bencode');
 const crypto = require('crypto');
 const bignum = require('bignum');
 
+module.exports.open = (filePath) => {
+	return bencode.decode(fs.readFileSync(filePath));
+};
+
 module.exports.infoHash = (torrent) => {
 	const info = bencode.encode(torrent.info);
 	return crypto.createHash('sha1').update(info).digest();

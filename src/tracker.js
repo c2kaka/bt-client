@@ -12,7 +12,14 @@ function udpSend(socket, message, rawUrl, cb = () => {}) {
 	socket.send(message, 0, message.length, url.port, url.host, cb);
 }
 
-function getResponseType() {}
+function getResponseType(response) {
+	const action = response.readUInt32BE(0);
+	if (action === 0) {
+		return 'connect';
+	} else if (action === 1) {
+		return 'announce';
+	}
+}
 
 function buildConnectionRequest() {
 	const buffer = Buffer.allocUnsafe(16);

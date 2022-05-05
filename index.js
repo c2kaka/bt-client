@@ -4,8 +4,9 @@ const bencode = require('bencode');
 const dgram = require('dgram');
 const Buffer = require('buffer').Buffer;
 const urlParse = require('url').parse;
+const torrentParser = require('./src/torrent-parser');
 
-const torrent = bencode.decode(fs.readFileSync('puppy.torrent'));
+const torrent = torrentParser.open('puppy.torrent');
 const url = urlParse(torrent.announce.toString('utf8'));
 const socket = dgram.createSocket('udp4');
 const message = Buffer.from('hello?', 'utf-8');
